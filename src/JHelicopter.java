@@ -1,6 +1,9 @@
-import java.util.Random; 
+import java.awt.Checkbox;
+import java.util.Random;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
@@ -8,6 +11,8 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonBuilder;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckBoxBuilder;
 import javafx.scene.control.LabelBuilder;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.image.Image;
@@ -45,18 +50,18 @@ public class JHelicopter extends Application {
 	public static int wallHurdelSpeed = 30;
 	public static long startTime;
 	public static long endTime;
-	
+	public static boolean playAudio = true;
+
 	public static Stage stage;
-	
-	public final static AudioClip loopAudio =
-            new AudioClip(JHelicopter.class.getResource("audio/loop.wav").toString());
-	public final static AudioClip crashAudio =
-            new AudioClip(JHelicopter.class.getResource("audio/crash.wav").toString());
-	
-	
-	final static Paint fillColor = new ImagePattern(new Image(Wall.class.getResource("pattern.jpg").toExternalForm())
-	,0,0,50,10,false);
-	
+
+	public final static AudioClip loopAudio = new AudioClip(JHelicopter.class
+			.getResource("audio/loop.wav").toString());
+	public final static AudioClip crashAudio = new AudioClip(JHelicopter.class
+			.getResource("audio/crash.wav").toString());
+
+	final static Paint fillColor = new ImagePattern(new Image(Wall.class
+			.getResource("pattern.jpg").toExternalForm()), 0, 0, 50, 10, false);
+
 	public static void main(String[] args) {
 		Application.launch(JHelicopter.class, args);
 	}
@@ -66,29 +71,29 @@ public class JHelicopter extends Application {
 		stage = primaryStage;
 		primaryStage.setTitle("JHelicopter");
 		primaryStage.setResizable(false);
-		final Group root = new Group();
+		Group root = new Group();
 		Scene scene = new Scene(root, width, height, Color.BLACK);
 
 		Helicopter helicopter = Helicopter.getInstance();
-		
+
 		root.getChildren().add(helicopter);
-		final Hurdles hurdles = new Hurdles(width);
+		Hurdles hurdles = new Hurdles(width);
 		root.getChildren().addAll(hurdles);
-		
+
 		HelicopterEventHandler handler = HelicopterEventHandler.getInstance();
 
 		scene.setOnKeyPressed(handler);
 		scene.setOnKeyReleased(handler);
 
-		//scene.setCamera(new ParallelCamera());
+		// scene.setCamera(new ParallelCamera());
 		primaryStage.setScene(scene);
 
 		primaryStage.show();
-		
+
 		startModal();
 	}
-	
-	public static void startModal(){
+
+	public static void startModal() {
 		final Stage dialog = new Stage(StageStyle.TRANSPARENT);
 		dialog.initModality(Modality.WINDOW_MODAL);
 		dialog.initOwner(stage);
@@ -105,8 +110,9 @@ public class JHelicopter extends Application {
 										.preserveRatio(true)
 										.styleClass("modal-image")
 										.image(new Image(
-												JHelicopter.class.getResourceAsStream(
-														"monu.jpg"))).build(),
+												JHelicopter.class
+														.getResourceAsStream("monu.jpg")))
+										.build(),
 								LabelBuilder
 										.create()
 										.text("Welcome to JavaFX Helicopter. This is a learning \n project developed by Anubhav Jain")
@@ -124,8 +130,7 @@ public class JHelicopter extends Application {
 														// getLudoInst();
 														Hurdles.start();
 														// the dialog.
-														stage
-																.getScene()
+														stage.getScene()
 																.getRoot()
 																.setEffect(null);
 														dialog.close();
@@ -142,8 +147,7 @@ public class JHelicopter extends Application {
 															ActionEvent actionEvent) {
 
 														// close the dialog.
-														stage
-																.getScene()
+														stage.getScene()
 																.getRoot()
 																.setEffect(null);
 														dialog.close();
@@ -179,109 +183,82 @@ public class JHelicopter extends Application {
 
 		stage.getScene().getRoot().setEffect(new BoxBlur());
 		dialog.show();
-		
+
 	}
-	
-	public static void finalModal(){
+
+	public static void finalModal() {
 		final Stage dialog = new Stage(StageStyle.TRANSPARENT);
 		long time = JHelicopter.endTime - JHelicopter.startTime;
-		
+
 		dialog.initModality(Modality.WINDOW_MODAL);
 		dialog.initOwner(stage);
-		dialog.setScene(new Scene(
-				HBoxBuilder
-						.create()
-						.styleClass("modal-dialog")
-						.children(
-								LabelBuilder
-										.create()
-										.text("You have scored " + time + " runs")
-										.build(),
-								ButtonBuilder
-										.create()
-										.text("Replay")
-										.defaultButton(true)
-										.onAction(
-												new EventHandler<ActionEvent>() {
-													@Override
-													public void handle(
-															ActionEvent actionEvent) {
-														// take action and close
-														// getLudoInst();
-														reset();
-														// the dialog.
-														stage
-																.getScene()
-																.getRoot()
-																.setEffect(null);
-														dialog.close();
-													}
-												}).build(),
-								ButtonBuilder
-										.create()
-										.text("Exit")
-										.cancelButton(true)
-										.onAction(
-												new EventHandler<ActionEvent>() {
-													@Override
-													public void handle(
-															ActionEvent actionEvent) {
+		dialog.setScene(new Scene(HBoxBuilder
+				.create()
+				.styleClass("modal-dialog")
+				.children(
+						LabelBuilder.create()
+								.text("You have scored " + time + " runs")
+								.build(),
+						ButtonBuilder.create().text("Replay")
+								.defaultButton(true)
+								.onAction(new EventHandler<ActionEvent>() {
+									@Override
+									public void handle(ActionEvent actionEvent) {
+										// take action and close
+										// getLudoInst();
+										reset();
+										// the dialog.
+										stage.getScene().getRoot()
+												.setEffect(null);
+										dialog.close();
+									}
+								}).build(),
+						ButtonBuilder.create().text("Exit").cancelButton(true)
+								.onAction(new EventHandler<ActionEvent>() {
+									@Override
+									public void handle(ActionEvent actionEvent) {
 
-														// close the dialog.
-														stage
-																.getScene()
-																.getRoot()
-																.setEffect(null);
-														dialog.close();
-														stage.close();
-													}
-												}).build()).build(),
-				Color.TRANSPARENT));
+										// close the dialog.
+										stage.getScene().getRoot()
+												.setEffect(null);
+										dialog.close();
+										stage.close();
+									}
+								}).build()).build(), Color.TRANSPARENT));
 		dialog.getScene()
 				.getStylesheets()
 				.add(JHelicopter.class.getResource("modal-dialog.css")
 						.toExternalForm());
-		
+
 		stage.getScene().getRoot().setEffect(new BoxBlur());
 		dialog.show();
 	}
 
-	public static void pauseModal(){
+	public static void pauseModal() {
 		final Stage dialog = new Stage(StageStyle.TRANSPARENT);
-		
+
 		dialog.initModality(Modality.WINDOW_MODAL);
 		dialog.initOwner(stage);
-		dialog.setScene(new Scene(
-				HBoxBuilder
-						.create()
-						.styleClass("modal-dialog")
-						.children(
-								LabelBuilder
-										.create()
-										.text("Hit enter to resume ")
-										.build(),
-								ButtonBuilder
-										.create()
-										.text("Resume")
-										.defaultButton(true)
-										.onAction(
-												new EventHandler<ActionEvent>() {
-													@Override
-													public void handle(
-															ActionEvent actionEvent) {
-														// take action and close
-														// getLudoInst();
-														Hurdles.resumeAll();
-														// the dialog.
-														stage
-																.getScene()
-																.getRoot()
-																.setEffect(null);
-														dialog.close();
-													}
-												}).build()
-								).build(),
-				Color.TRANSPARENT));
+		dialog.setScene(new Scene(HBoxBuilder
+				.create()
+				.styleClass("modal-dialog")
+				.children(
+						LabelBuilder.create().text("Hit enter to resume ")
+								.build(),
+						ButtonBuilder.create().text("Resume")
+								.defaultButton(true)
+								.onAction(new EventHandler<ActionEvent>() {
+									@Override
+									public void handle(ActionEvent actionEvent) {
+										// take action and close
+										// getLudoInst();
+										Hurdles.resumeAll();
+										// the dialog.
+										stage.getScene().getRoot()
+												.setEffect(null);
+										dialog.close();
+									}
+								}).build()).build(), Color.TRANSPARENT));
 		dialog.getScene()
 				.getStylesheets()
 				.add(JHelicopter.class.getResource("modal-dialog.css")
@@ -290,26 +267,73 @@ public class JHelicopter extends Application {
 		dialog.show();
 	}
 
-	
-	public static void reset(){
+	@SuppressWarnings("unchecked")
+	public static void setting() {
+		final Stage dialog = new Stage(StageStyle.TRANSPARENT);
+
+		final CheckBox cb = CheckBoxBuilder.create().text("Sound")
+				.selected(playAudio).build();
+		cb.selectedProperty().addListener(new ChangeListener() {
+
+			@Override
+			public void changed(ObservableValue observable, Object oldValue,
+					Object newValue) {
+				// TODO Auto-generated method stub
+				if (!cb.selectedProperty().getValue()) {
+					playAudio = false;
+					loopAudio.stop();
+				}
+			}
+		});
+
+		dialog.initModality(Modality.WINDOW_MODAL);
+		dialog.initOwner(stage);
+		dialog.setScene(new Scene(HBoxBuilder
+				.create()
+				.styleClass("modal-dialog")
+				.children(
+						LabelBuilder.create().text("Select Setting").build(),
+						cb,
+						ButtonBuilder.create().text("Done").defaultButton(true)
+								.onAction(new EventHandler<ActionEvent>() {
+									@Override
+									public void handle(ActionEvent actionEvent) {
+										// take action and close
+										// getLudoInst();
+										Hurdles.resumeAll();
+										// the dialog.
+										stage.getScene().getRoot()
+												.setEffect(null);
+										dialog.close();
+									}
+								}).build()).build(), Color.TRANSPARENT));
+		dialog.getScene()
+				.getStylesheets()
+				.add(JHelicopter.class.getResource("modal-dialog.css")
+						.toExternalForm());
+		stage.getScene().getRoot().setEffect(new BoxBlur());
+		dialog.show();
+	}
+
+	public static void reset() {
 		final Group root = new Group();
 		Scene scene = stage.getScene();
 		Helicopter helicopter = Helicopter.reset();
-		
+
 		root.getChildren().add(helicopter);
-		
-		final Hurdles hurdles = new Hurdles(width);
+
+		Hurdles hurdles = new Hurdles(width);
 		root.getChildren().addAll(hurdles);
-		
+
 		HelicopterEventHandler handler = HelicopterEventHandler.reset();
-		
-		//stage.show();
+
+		// stage.show();
 		scene.setOnKeyPressed(handler);
 		scene.setOnKeyReleased(handler);
-		
+
 		scene.setRoot(root);
-		//startModal();
+		// startModal();
 		Hurdles.start();
 	}
-	
+
 }

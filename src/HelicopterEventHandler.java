@@ -80,10 +80,12 @@ public class HelicopterEventHandler implements EventHandler<KeyEvent> {
 		final Helicopter helicopter = Helicopter.getInstance();
 		if (helicopter.anim.getStatus() != Animation.Status.STOPPED) {
 			if (event.getEventType() == KeyEvent.KEY_RELEASED) {
+				JHelicopter.loopAudio.setVolume(1.0f);
 				downTransition.pause();
 				upTransition.pause();
 				helicopter.anim.playFromStart();
 			} else if (event.getCode() == KeyCode.UP) {
+				JHelicopter.loopAudio.setVolume(50.0f);
 				if (helicopter.anim.getStatus() != Animation.Status.PAUSED) {
 					helicopter.anim.pause();
 				}
@@ -94,6 +96,7 @@ public class HelicopterEventHandler implements EventHandler<KeyEvent> {
 					upTransition.playFromStart();
 				}
 			} else if (event.getCode() == KeyCode.DOWN) {
+				JHelicopter.loopAudio.setVolume(50.0f);
 				if (helicopter.anim.getStatus() != Animation.Status.PAUSED) {
 					helicopter.anim.pause();
 				}
@@ -103,8 +106,12 @@ public class HelicopterEventHandler implements EventHandler<KeyEvent> {
 				if (downTransition.getStatus() != Animation.Status.RUNNING) {
 					downTransition.playFromStart();
 				}
-			}else if (event.getCode() == KeyCode.SPACE) {
+			} else if (event.getCode() == KeyCode.SPACE) {
 				Hurdles.pauseAll();
+				JHelicopter.pauseModal();
+			} else if (event.getCode() == KeyCode.CONTROL) {
+				Hurdles.pauseAll();
+				JHelicopter.setting();
 			}
 		}
 	}

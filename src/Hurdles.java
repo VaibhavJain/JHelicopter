@@ -95,13 +95,18 @@ class Hurdles extends Group {
 			anim.play();
 			Helicopter.getInstance().start();
 			JHelicopter.loopAudio.setCycleCount(Timeline.INDEFINITE);
+			JHelicopter.loopAudio.setVolume(1.0f);
+			if(JHelicopter.playAudio){
 			JHelicopter.loopAudio.play();
+			}
 		}
 		
 		
 		public static void stopAll(){
+			if(JHelicopter.playAudio){
 			JHelicopter.loopAudio.stop();
 			JHelicopter.crashAudio.play();
+			}
 			JHelicopter.endTime =  System.currentTimeMillis();
 			if(wallAnim.getStatus() != Animation.Status.STOPPED)
 			wallAnim.stop();
@@ -121,15 +126,19 @@ class Hurdles extends Group {
 			if(Helicopter.getInstance().anim.getStatus() == Animation.Status.RUNNING)
 			Helicopter.getInstance().anim.pause();
 			HelicopterEventHandler.getInstance().pause();
-			JHelicopter.pauseModal();
 		}
 		public static void resumeAll(){
+			if(JHelicopter.playAudio){
 			JHelicopter.loopAudio.play();
+			}
 			if(wallAnim.getStatus() == Animation.Status.PAUSED)
 			wallAnim.play();
 			if(anim.getStatus() == Animation.Status.PAUSED)
 			anim.play();
 			if(Helicopter.getInstance().anim.getStatus() == Animation.Status.PAUSED)
 			Helicopter.getInstance().anim.play();
+		}
+		public static void stopAudio(){
+			JHelicopter.loopAudio.stop();
 		}
 	}

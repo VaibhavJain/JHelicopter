@@ -50,12 +50,13 @@ public class OnFinished implements EventHandler<ActionEvent> {
 
 				}
 			}  else if (n instanceof Circle) {
-				n.setTranslateX(n.getTranslateX() - JHelicopter.wallHurdelTranslateX);
+				
 				if (n.getLayoutX() + n.getTranslateX()
-						+ n.getBoundsInLocal().getWidth() <= 0) {
+						+ n.getBoundsInLocal().getWidth() <= -5) {
 					// remove and create
 					group.getChildren().remove(n);
 			}
+				n.setTranslateX(n.getTranslateX() - JHelicopter.wallHurdelTranslateX);
 		}
 	} group.getChildren().add(helicopter.getSmoke());
 	}
