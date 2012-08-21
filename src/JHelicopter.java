@@ -1,7 +1,14 @@
-import java.awt.Checkbox;
 import java.util.Random;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.ScaleTransition;
+import javafx.animation.ScaleTransitionBuilder;
+import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -22,9 +29,13 @@ import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextBuilder;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Duration;
 
 import com.sun.javafx.scene.paint.ImagePattern;
 
@@ -336,4 +347,43 @@ public class JHelicopter extends Application {
 		Hurdles.start();
 	}
 
+	public static void waitAcreen() {
+		final Stage dialog = new Stage(StageStyle.TRANSPARENT);
+		final Integer count = 0;
+		final StringProperty string = new SimpleStringProperty();
+		dialog.initModality(Modality.WINDOW_MODAL);
+		dialog.initOwner(stage);
+		Group root = new Group();
+		final Text text = TextBuilder.create().font(new Font(20)).build();
+		text.textProperty().bind(string);
+
+		Scene scene = new Scene(root, width, height, Color.TRANSPARENT);
+		dialog.setScene(scene);
+		EventHandler<ActionEvent> onFinished = new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent paramT) {
+				// TODO Auto-generated method stub
+				if(count < 3){
+				ScaleTransition st = ScaleTransitionBuilder.create().node(text)
+						.byX(5.0f).byY(5.0f).cycleCount(0)
+						.duration(Duration.millis(50)).build();
+				st.play();
+				count = count + 1;
+				}else{
+					
+				}
+			}
+		};
+
+		Timeline anim = new Timeline();
+		KeyValue keyValueX = new KeyValue(new SimpleIntegerProperty(0), 0);
+		KeyFrame keyFrame = new KeyFrame(Duration.millis(50), onFinished,
+				keyValueX);
+		anim.getKeyFrames().add(keyFrame);
+
+		stage.getScene().getRoot().setEffect(new BoxBlur());
+		dialog.show();
+
+	}
 }
