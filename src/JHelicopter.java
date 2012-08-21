@@ -6,6 +6,7 @@ import javafx.animation.ScaleTransition;
 import javafx.animation.ScaleTransitionBuilder;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -23,9 +24,12 @@ import javafx.scene.control.CheckBoxBuilder;
 import javafx.scene.control.LabelBuilder;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.image.ImageViewBuilder;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBoxBuilder;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.StackPaneBuilder;
 import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -263,7 +267,8 @@ public class JHelicopter extends Application {
 									public void handle(ActionEvent actionEvent) {
 										// take action and close
 										// getLudoInst();
-										Hurdles.resumeAll();
+										waitAcreen();
+										//Hurdles.resumeAll();
 										// the dialog.
 										stage.getScene().getRoot()
 												.setEffect(null);
@@ -311,7 +316,8 @@ public class JHelicopter extends Application {
 									public void handle(ActionEvent actionEvent) {
 										// take action and close
 										// getLudoInst();
-										Hurdles.resumeAll();
+										waitAcreen();
+										//Hurdles.resumeAll();
 										// the dialog.
 										stage.getScene().getRoot()
 												.setEffect(null);
@@ -349,41 +355,62 @@ public class JHelicopter extends Application {
 
 	public static void waitAcreen() {
 		final Stage dialog = new Stage(StageStyle.TRANSPARENT);
-		final Integer count = 0;
-		final StringProperty string = new SimpleStringProperty();
+		final IntegerProperty intProperty = new SimpleIntegerProperty(0);
+		final Image[] array = {
+				(new Image(JHelicopter.class.getResource("1.png")
+						.toExternalForm())),
+				(new Image(JHelicopter.class.getResource("2.png")
+						.toExternalForm())),
+				(new Image(JHelicopter.class.getResource("3.png")
+						.toExternalForm())) };
+
 		dialog.initModality(Modality.WINDOW_MODAL);
 		dialog.initOwner(stage);
 		Group root = new Group();
-		final Text text = TextBuilder.create().font(new Font(20)).build();
-		text.textProperty().bind(string);
-
 		Scene scene = new Scene(root, width, height, Color.TRANSPARENT);
+		StackPane pane = StackPaneBuilder.create()
+				.layoutX((scene.getWidth() / 2) - 100).layoutY((scene.getHeight() / 2) - 50)
+				.build();
+		final ImageView imageView = new ImageView();
+		pane.getChildren().add(imageView);
+		root.getChildren().addAll(pane);
+
 		dialog.setScene(scene);
-		EventHandler<ActionEvent> onFinished = new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent paramT) {
-				// TODO Auto-generated method stub
-				if(count < 3){
-				ScaleTransition st = ScaleTransitionBuilder.create().node(text)
-						.byX(5.0f).byY(5.0f).cycleCount(0)
-						.duration(Duration.millis(50)).build();
-				st.play();
-				count = count + 1;
-				}else{
-					
-				}
-			}
-		};
-
-		Timeline anim = new Timeline();
-		KeyValue keyValueX = new KeyValue(new SimpleIntegerProperty(0), 0);
-		KeyFrame keyFrame = new KeyFrame(Duration.millis(50), onFinished,
-				keyValueX);
-		anim.getKeyFrames().add(keyFrame);
-
 		stage.getScene().getRoot().setEffect(new BoxBlur());
 		dialog.show();
+		
+		Timeline timeline = new Timeline();
 
+		
+		int count = 0;
+		KeyValue value = new KeyValue(intProperty, count++);
+		KeyFrame frame = new KeyFrame(Duration.millis(500),
+				new EventHandler<ActionEvent>() {
+					int co = 0;
+
+					@Override
+					public void handle(ActionEvent paramT) {
+						imageView.setImage(array[co]);
+
+						/*ScaleTransition st = ScaleTransitionBuilder.create()
+								.byX(2).byY(2).node(imageView)
+								.duration(Duration.millis(500)).build();
+						st.play();*/
+						imageView.setFitHeight(150);
+						imageView.setFitWidth(150);
+						imageView.resize(150, 150);
+						co++;
+						if(co == 3){
+							stage.getScene().getRoot()
+							.setEffect(null);
+							dialog.close();
+							Hurdles.resumeAll();
+						}
+					}
+				}, value);
+
+		timeline.getKeyFrames().add(frame);
+		timeline.setCycleCount(3);
+		timeline.play();		
 	}
 }
