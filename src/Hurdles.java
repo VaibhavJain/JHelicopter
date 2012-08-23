@@ -36,7 +36,7 @@ class Hurdles extends Group {
 			return getHurdle(layoutCordinate);
 		}
 
-		public Hurdles(final int width) {
+		public Hurdles(int width) {
 			// this.content = content;
 			this.getChildren().addAll(initStage(width));
 			wallAnim = getInitWall(this);

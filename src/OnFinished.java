@@ -7,7 +7,7 @@ import javafx.scene.shape.Circle;
 
 public class OnFinished implements EventHandler<ActionEvent> {
 
-	public Hurdles group;
+	public Hurdles group = null;
 
 	public OnFinished(Hurdles group) {
 		super();

@@ -1,5 +1,7 @@
 import java.util.Random;
 
+import javafx.animation.FadeTransition;
+import javafx.animation.FadeTransitionBuilder;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.ScaleTransition;
@@ -67,6 +69,7 @@ public class JHelicopter extends Application {
 	public static long endTime;
 	public static boolean playAudio = true;
 
+	public static int waitScreenTime = 700; // mills
 	public static Stage stage;
 
 	public final static AudioClip loopAudio = new AudioClip(JHelicopter.class
@@ -344,10 +347,8 @@ public class JHelicopter extends Application {
 
 		HelicopterEventHandler handler = HelicopterEventHandler.reset();
 
-		// stage.show();
 		scene.setOnKeyPressed(handler);
 		scene.setOnKeyReleased(handler);
-
 		scene.setRoot(root);
 		// startModal();
 		Hurdles.start();
@@ -362,7 +363,9 @@ public class JHelicopter extends Application {
 				(new Image(JHelicopter.class.getResource("2.png")
 						.toExternalForm())),
 				(new Image(JHelicopter.class.getResource("3.png")
-						.toExternalForm())) };
+						.toExternalForm())),
+				(new Image(JHelicopter.class.getResource("1.png")
+								.toExternalForm()))};
 
 		dialog.initModality(Modality.WINDOW_MODAL);
 		dialog.initOwner(stage);
@@ -384,23 +387,27 @@ public class JHelicopter extends Application {
 		
 		int count = 0;
 		KeyValue value = new KeyValue(intProperty, count++);
-		KeyFrame frame = new KeyFrame(Duration.millis(500),
+		KeyFrame frame = new KeyFrame(Duration.millis(waitScreenTime),
 				new EventHandler<ActionEvent>() {
 					int co = 0;
 
 					@Override
 					public void handle(ActionEvent paramT) {
+						System.out.println(co);
 						imageView.setImage(array[co]);
 
-						/*ScaleTransition st = ScaleTransitionBuilder.create()
-								.byX(2).byY(2).node(imageView)
-								.duration(Duration.millis(500)).build();
-						st.play();*/
-						imageView.setFitHeight(150);
+						ScaleTransition st = ScaleTransitionBuilder.create()
+								.fromX(1).fromY(1).byX(1.2).byY(1.2).node(imageView)
+								.duration(Duration.millis(waitScreenTime)).build();
+						st.playFromStart();
+						FadeTransition ft = FadeTransitionBuilder.create().node(imageView).duration(Duration.millis(450)).build();
+						ft.playFromStart();
+						
+						/*imageView.setFitHeight(150);
 						imageView.setFitWidth(150);
-						imageView.resize(150, 150);
+						imageView.resize(150, 150);*/
 						co++;
-						if(co == 3){
+						if(co == 4){
 							stage.getScene().getRoot()
 							.setEffect(null);
 							dialog.close();
@@ -410,7 +417,8 @@ public class JHelicopter extends Application {
 				}, value);
 
 		timeline.getKeyFrames().add(frame);
-		timeline.setCycleCount(3);
+		timeline.setCycleCount(4);
+		timeline.setDelay(Duration.millis(100));
 		timeline.play();		
 	}
 }
