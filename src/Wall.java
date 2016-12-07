@@ -22,7 +22,7 @@ public class Wall extends Rectangle {
 		int cutY = JHelicopter.RANDOM.nextInt(range);
 		cutY = cutY - ( cutY % 10 ) + 10;
 		int bottomY = JHelicopter.wallBlockHeight - cutY;
-
+// second cahnage
 		Wall top = new Wall(JHelicopter.width, 0, cutY);
 		Wall bottom = new Wall(JHelicopter.width,JHelicopter.height
 				- bottomY, bottomY );
